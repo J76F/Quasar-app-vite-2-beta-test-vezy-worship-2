@@ -5,8 +5,10 @@
 
 import { configure } from 'quasar/wrappers'
 
-export default configure((/* ctx */) => {
+export default configure((ctx) => {
   return {
+    supportTS: false,
+
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
 
@@ -14,8 +16,16 @@ export default configure((/* ctx */) => {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
-
-      'axios'
+      'store',
+      'api',
+      'filesystem',
+      'filesystemdb',
+      'electron',
+      'date',
+      'strip',
+      'shortkey',
+      'notify',
+      'global-components'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
@@ -32,8 +42,7 @@ export default configure((/* ctx */) => {
       // 'themify',
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
-
-      'roboto-font', // optional, you are not bound to it
+      // 'roboto-font', // optional, you are not bound to it
       'material-icons' // optional, you are not bound to it
     ],
 
@@ -53,7 +62,14 @@ export default configure((/* ctx */) => {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+        API_URL: ctx.dev
+          ? 'http://localhost:5000/api'
+          : 'https://vezy-worship.web.app/api',
+        API_HOST_URL: ctx.dev
+          ? 'http://localhost:5000'
+          : 'https://vezy-worship.web.app'
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
@@ -75,6 +91,10 @@ export default configure((/* ctx */) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
+      server: {
+        type: 'http'
+      },
+      port: 8080,
       open: true // opens browser window automatically
     },
 
@@ -83,7 +103,7 @@ export default configure((/* ctx */) => {
       config: {},
 
       // iconSet: 'material-icons', // Quasar icon set
-      // lang: 'en-US', // Quasar language pack
+      lang: 'nl', // Quasar language pack
 
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
@@ -93,7 +113,10 @@ export default configure((/* ctx */) => {
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: [
+        'Notify',
+        'Dialog'
+      ]
     },
 
     // animations: 'all', // --- includes all animations
@@ -119,6 +142,7 @@ export default configure((/* ctx */) => {
       // (gets superseded if process.env.PORT is specified at runtime)
 
       middlewares: [
+        ctx.prod ? 'compression' : '',
         'render' // keep this as last one
       ],
 
@@ -141,9 +165,46 @@ export default configure((/* ctx */) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'GenerateSW' // 'GenerateSW' or 'InjectManifest'
+      workboxMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
+      workboxOptions: {}, // only for GenerateSW
       // swFilename: 'sw.js',
       // manifestFilename: 'manifest.json'
+      manifest: {
+        name: 'VezyWorship',
+        short_name: 'VezyWorship',
+        description: 'Presentatiesoftware voor beamer én livestream',
+        display: 'standalone',
+        orientation: 'portrait',
+        background_color: '#ffffff',
+        theme_color: '#027be3',
+        icons: [
+          {
+            src: 'icons/icon-128x128.png',
+            sizes: '128x128',
+            type: 'image/png'
+          },
+          {
+            src: 'icons/icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'icons/icon-256x256.png',
+            sizes: '256x256',
+            type: 'image/png'
+          },
+          {
+            src: 'icons/icon-384x384.png',
+            sizes: '384x384',
+            type: 'image/png'
+          },
+          {
+            src: 'icons/icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
+      }
       // extendManifestJson (json) {},
       // useCredentialsForManifestTag: true,
       // injectPwaMetaTags: false,
@@ -175,7 +236,7 @@ export default configure((/* ctx */) => {
       // specify the debugging port to use for the Electron app when running in development mode
       inspectPort: 5858,
 
-      bundler: 'packager', // 'packager' or 'builder'
+      bundler: 'builder', // 'packager' or 'builder'
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
@@ -193,7 +254,19 @@ export default configure((/* ctx */) => {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'vezy-worship'
+        appId: 'vezy-worship',
+        artifactName: 'VezyWorship-Setup-${version}.${ext}', // eslint-disable-line no-template-curly-in-string
+        win: {
+          target: [
+            {
+              target: 'nsis',
+              arch: ['x64']
+            }
+          ]
+        },
+        publish: {
+          provider: 'github'
+        }
       }
     },
 
@@ -202,9 +275,9 @@ export default configure((/* ctx */) => {
       // extendBexScriptsConf (esbuildConf) {},
       // extendBexManifestJson (json) {},
 
-      contentScripts: [
-        'my-content-script'
-      ]
+      // contentScripts: [
+      //  'my-content-script'
+      // ]
     }
   }
 })
