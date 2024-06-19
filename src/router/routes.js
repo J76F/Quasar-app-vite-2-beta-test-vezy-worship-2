@@ -1,18 +1,39 @@
-const routes = [
+import App from 'components/App.vue'
+import Output from 'components/output/Output.vue'
+import OutputStage from 'components/output/OutputStage.vue'
+import Help from 'components/help/Help.vue'
+
+export default [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
-    ]
+    component: App
   },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
+    path: '/output/beamer',
+    component: Output,
+    props: () => ({ id: 'beamer', showBackground: true, showMessages: true })
+  },
+  {
+    path: '/output/beamer/alpha',
+    component: Output,
+    props: () => ({ id: 'beamer', showBackground: true, showMessages: true, alpha: true })
+  },
+  {
+    path: '/output/livestream',
+    component: Output,
+    props: () => ({ id: 'livestream' })
+  },
+  {
+    path: '/output/livestream/alpha',
+    component: Output,
+    props: () => ({ id: 'livestream', alpha: true })
+  },
+  {
+    path: '/output/stage',
+    component: OutputStage
+  },
+  {
+    path: '/help',
+    component: Help
   }
 ]
-
-export default routes
