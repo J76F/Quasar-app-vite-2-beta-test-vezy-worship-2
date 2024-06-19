@@ -54,7 +54,7 @@ function createWindow () {
   if (process.env.DEV) {
     mainWindow2.loadURL(process.env.APP_URL + '#/twee/')
   } else {
-    mainWindow2.loadFile(path.join(currentDir, './twee/index.html'))
+    mainWindow2.loadFile('index.html', { hash: '/twee/' }) // { query: { path: '/twee/' } }
   }
 
   if (process.env.DEBUGGING) {
