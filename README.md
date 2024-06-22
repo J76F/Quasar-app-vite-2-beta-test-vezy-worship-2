@@ -4,7 +4,7 @@ Test update van webpack4 naar vite 2 beta14 van quasar.
 Main = org nieuw project quasar.dev vite 2 + electron 
 Dev = 1e test met poorten vezy
 
-Presentatiesoftware voor beamer én livestream
+Zie org: https://github.com/VEZwolle/vezy-worship
 
 ## Install the dependencies
 ```bash
